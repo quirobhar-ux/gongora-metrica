@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Del esplendor al desengaño — SPAN 241</title>
+<style>
+:root{
+  --bg:#0c0b0c; --panel:#171417; --panel2:#211d20; --ink:#f4ecdc; --muted:#b8afa7;
+  --gold:#d0a156; --wine:#8f2138; --red:#b83a4c; --blue:#5f84ae; --green:#6f9b74;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+body{padding:16px}
+.app{max-width:1000px;margin:auto;border:1px solid #2d282b;border-radius:22px;overflow:hidden;background:linear-gradient(#111012,#0b0a0b);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+header{padding:20px 24px 14px;border-bottom:1px solid #292428}
+.eyebrow{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+h1{font-family:Georgia,serif;font-size:clamp(30px,5vw,50px);margin:4px 0 6px}
+.subtitle{color:var(--muted);font-size:14px}
+.step{display:none;padding:22px}
+.step.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--panel);border:1px solid #332e31;border-radius:16px;padding:18px}
+.prompt{font-family:Georgia,serif;font-size:clamp(24px,3.5vw,36px);line-height:1.2;margin:0 0 18px}
+.options{display:grid;gap:10px}
+button{font:inherit}
+.option,.btn{
+  border:1px solid #41393e;background:#181518;color:var(--ink);
+  border-radius:12px;padding:13px 15px;cursor:pointer;text-align:left;font-weight:700
+}
+.option:hover,.btn:hover{border-color:var(--gold)}
+.option.correct{border-color:var(--green);background:#16231a}
+.option.wrong{border-color:var(--red);background:#28161b}
+.btn.primary{background:#2d2014;border-color:#765628;color:#f1d7a1}
+.feedback{margin-top:14px;padding:12px 14px;border-left:3px solid var(--gold);background:#1a1718;border-radius:8px;color:#d8d0c8;display:none;line-height:1.5}
+.feedback.show{display:block}
+.nav{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.stage{position:relative;height:500px;overflow:hidden;border-radius:18px;background:
+ radial-gradient(circle at 50% 30%,rgba(208,161,86,.16),transparent 30%),
+ linear-gradient(#161216,#0b090a)}
+.word{position:absolute;left:50%;top:35px;transform:translateX(-50%);font-family:Georgia,serif;font-size:clamp(30px,5vw,56px);letter-spacing:.08em;opacity:0}
+.word small{display:block;font:700 11px Inter,Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);text-align:center;margin-top:6px}
+.rose{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%) scale(.82);width:260px;height:330px;opacity:0}
+.rose svg{width:100%;height:100%}
+.petal{transform-box:fill-box;transform-origin:center}
+.hourglass{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%) scale(.8);width:145px;height:220px;opacity:0}
+.hourglass svg{width:100%;height:100%}
+.quote{position:absolute;left:50%;bottom:38px;transform:translateX(-50%);width:88%;text-align:center;font-family:Georgia,serif;font-size:clamp(20px,3vw,32px);opacity:0}
+.attr{display:block;color:var(--gold);font:700 12px Inter,Arial,sans-serif;letter-spacing:.08em;margin-top:8px}
+.finalIdea{position:absolute;left:50%;top:53%;transform:translate(-50%,-50%);width:88%;text-align:center;opacity:0}
+.finalIdea .big{font-family:Georgia,serif;font-size:clamp(34px,5vw,58px);letter-spacing:.08em}
+.finalIdea p{color:#d8d0c7;font-size:18px;line-height:1.5}
+.progress{height:7px;background:#211d20;border-radius:99px;overflow:hidden;margin-top:14px}
+.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--wine),var(--gold))}
+.animate .word{animation:word 12s linear forwards}
+.animate .rose{animation:rose 12s ease-in-out forwards}
+.animate .hourglass{animation:hourglass 12s ease-in-out forwards}
+.animate .quote{animation:quote 12s ease-in-out forwards}
+.animate .finalIdea{animation:final 12s ease-in-out forwards}
+.animate .progress div{animation:prog 12s linear forwards}
+.animate .petal{animation:petal 12s ease-in-out forwards}
+@keyframes word{
+ 0%,5%{opacity:0} 9%,24%{opacity:1} 28%{opacity:0}
+ 32%,43%{opacity:1} 47%{opacity:0}
+ 51%,63%{opacity:1} 67%,100%{opacity:0}
+}
+@keyframes rose{
+ 0%,5%{opacity:0;filter:saturate(1)} 10%,38%{opacity:1}
+ 52%{filter:saturate(.75) brightness(.82)}
+ 69%{opacity:.48;filter:saturate(.25) brightness(.55)}
+ 80%,100%{opacity:0}
+}
+@keyframes hourglass{0%,26%{opacity:0}32%,47%{opacity:1}53%,100%{opacity:0}}
+@keyframes quote{0%,63%{opacity:0}69%,80%{opacity:1}85%,100%{opacity:0}}
+@keyframes final{0%,83%{opacity:0}89%,100%{opacity:1}}
+@keyframes prog{from{width:0}to{width:100%}}
+@keyframes petal{0%,40%{opacity:1}70%,100%{opacity:.3;filter:saturate(.2)}}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+.node{padding:12px 8px;border-radius:12px;text-align:center;border:1px solid #3a3437;background:#171417}
+.node b{display:block;color:var(--gold);font-size:13px}.node span{font-size:12px;color:var(--muted)}
+.authorGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.author{background:var(--panel);border:1px solid #332e31;border-radius:16px;padding:16px}
+.author h3{margin:0 0 8px;font-family:Georgia,serif;color:var(--gold);font-size:22px}
+.author blockquote{margin:8px 0 12px;padding-left:12px;border-left:2px solid var(--wine);font-family:Georgia,serif;color:#eee4d8}
+.author p{color:var(--muted);line-height:1.45;font-size:14px}
+.pattern{display:grid;gap:10px}
+.pattern .row{display:grid;grid-template-columns:220px 1fr;gap:14px;padding:12px 14px;background:var(--panel);border:1px solid #332e31;border-radius:12px}
+.pattern .row b{color:var(--gold)}
+.note{color:var(--muted);font-size:13px;line-height:1.45}
+@media(max-width:760px){
+  .authorGrid{grid-template-columns:1fr}
+  .timeline{grid-template-columns:1fr 1fr}
+  .pattern .row{grid-template-columns:1fr}
+  .stage{height:470px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="eyebrow">SPAN 241 · Microexperiencia interactiva</div>
+  <h1>Del esplendor al desengaño</h1>
+  <div class="subtitle">Predice → observa → conecta → comprueba</div>
+</header>
+
+<section class="step active" id="step1">
+  <div class="card">
+    <div class="eyebrow">1 · Predice</div>
+    <p class="prompt">¿Qué crees que destruirá el tiempo?</p>
+    <div class="options">
+      <button class="option" data-answer="wrong">A. Solo la belleza física.</button>
+      <button class="option" data-answer="correct">B. Todo lo que parece permanente.</button>
+    </div>
+    <div class="feedback" id="predictFeedback"></div>
+    <div class="nav">
+      <button class="btn primary" id="toAnimation" disabled>Ver la animación</button>
+    </div>
+  </div>
+</section>
+
+<section class="step" id="step2">
+  <div class="eyebrow">2 · Observa</div>
+  <div class="stage" id="stage">
+    <div class="word" id="phaseWord">BELLEZA<small id="phaseSmall">apariencia · juventud · brillo</small></div>
+
+    <div class="rose">
+      <svg viewBox="0 0 260 330" aria-hidden="true">
+        <defs>
+          <radialGradient id="pg" cx="45%" cy="35%" r="70%">
+            <stop offset="0%" stop-color="#c9485c"/>
+            <stop offset="58%" stop-color="#891f33"/>
+            <stop offset="100%" stop-color="#4a111c"/>
+          </radialGradient>
+        </defs>
+        <path d="M130 180 C128 225 136 270 132 325" stroke="#46503d" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M129 242 C96 230 80 244 73 270 C101 267 118 258 130 244Z" fill="#354131"/>
+        <path d="M134 276 C166 260 182 278 184 301 C161 297 144 291 134 278Z" fill="#354131"/>
+        <g transform="translate(130 120)">
+          <ellipse class="petal" rx="42" ry="68" fill="url(#pg)" transform="rotate(0) translate(0,-10)"/>
+          <ellipse class="petal" rx="38" ry="63" fill="url(#pg)" transform="rotate(45) translate(0,-9)"/>
+          <ellipse class="petal" rx="38" ry="63" fill="url(#pg)" transform="rotate(90) translate(0,-9)"/>
+          <ellipse class="petal" rx="38" ry="63" fill="url(#pg)" transform="rotate(135) translate(0,-9)"/>
+          <ellipse class="petal" rx="38" ry="63" fill="url(#pg)" transform="rotate(180) translate(0,-9)"/>
+          <ellipse class="petal" rx="38" ry="63" fill="url(#pg)" transform="rotate(225) translate(0,-9)"/>
+          <ellipse class="petal" rx="38" ry="63" fill="url(#pg)" transform="rotate(270) translate(0,-9)"/>
+          <ellipse class="petal" rx="38" ry="63" fill="url(#pg)" transform="rotate(315) translate(0,-9)"/>
+          <circle cx="0" cy="0" r="41" fill="#5d1523"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hourglass">
+      <svg viewBox="0 0 160 230" aria-hidden="true">
+        <path d="M30 18 H130 M30 212 H130" stroke="#9b753f" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M45 35 C45 75 62 82 80 105 C98 82 115 75 115 35 Z" stroke="#dbc9a8" stroke-width="4" fill="none"/>
+        <path d="M45 195 C45 155 62 148 80 125 C98 148 115 155 115 195 Z" stroke="#dbc9a8" stroke-width="4" fill="none"/>
+        <path d="M56 49 H104 C99 73 92 83 80 98 C68 83 61 73 56 49Z" fill="#d0a156"/>
+        <path d="M56 185 C67 167 73 157 80 145 C87 157 93 167 104 185Z" fill="#d0a156"/>
+      </svg>
+    </div>
+
+    <div class="quote">
+      “Viviendo engañas y muriendo enseñas.”
+      <span class="attr">Sor Juana Inés de la Cruz</span>
+    </div>
+
+    <div class="finalIdea">
+      <div class="big">DESENGAÑO</div>
+      <p>La apariencia cambia; el tiempo y la realidad revelan su fragilidad.</p>
+    </div>
+  </div>
+  <div class="progress"><div></div></div>
+  <div class="nav">
+    <button class="btn" id="replay">Repetir animación</button>
+    <button class="btn primary" id="toAuthors">Conectar con los autores</button>
+  </div>
+</section>
+
+<section class="step" id="step3">
+  <div class="eyebrow">3 · Conecta</div>
+  <p class="prompt">Tres autores, tres formas de llegar al desengaño</p>
+
+  <div class="authorGrid">
+    <article class="author">
+      <h3>Góngora</h3>
+      <blockquote>“en tierra, en humo, en polvo, en sombra, en nada.”</blockquote>
+      <p><b>Idea:</b> la belleza y la juventud terminan en desaparición. El <i>carpe diem</i> conduce al desengaño.</p>
+    </article>
+
+    <article class="author">
+      <h3>Quevedo</h3>
+      <blockquote>“estuve vivo con la muerte / y con la vida estaba muerto”</blockquote>
+      <p><b>Idea:</b> la paradoja enfrenta apariencia y realidad. La felicidad del sueño desaparece al despertar.</p>
+    </article>
+
+    <article class="author">
+      <h3>Sor Juana</h3>
+      <blockquote>“viviendo engañas y muriendo enseñas”</blockquote>
+      <p><b>Idea:</b> la belleza puede crear una ilusión de permanencia; la muerte revela la verdad del tiempo.</p>
+    </article>
+  </div>
+
+  <div class="timeline">
+    <div class="node"><b>APARIENCIA</b><span>parece estable</span></div>
+    <div class="node"><b>TIEMPO / REALIDAD</b><span>la pone a prueba</span></div>
+    <div class="node"><b>RUPTURA</b><span>la ilusión cae</span></div>
+    <div class="node"><b>DESENGAÑO</b><span>se revela la verdad</span></div>
+  </div>
+
+  <div class="nav">
+    <button class="btn primary" id="toQuiz">Comprobar comprensión</button>
+  </div>
+</section>
+
+<section class="step" id="step4">
+  <div class="card">
+    <div class="eyebrow">4 · Comprueba</div>
+    <p class="prompt">¿Qué idea conecta mejor los tres textos?</p>
+    <div class="options">
+      <button class="option" data-quiz="wrong">A. La belleza y la felicidad pueden mantenerse si sabemos disfrutarlas.</button>
+      <button class="option" data-quiz="correct">B. Las apariencias parecen estables, pero el tiempo o la realidad revelan su fragilidad.</button>
+    </div>
+    <div class="feedback" id="quizFeedback"></div>
+    <div class="nav">
+      <button class="btn primary" id="toPattern" disabled>Aplicar el patrón de lectura</button>
+    </div>
+  </div>
+</section>
+
+<section class="step" id="step5">
+  <div class="eyebrow">5 · Aplica</div>
+  <p class="prompt">Ahora busca este patrón en cualquier texto barroco</p>
+
+  <div class="pattern">
+    <div class="row"><b>1. ¿Qué parece verdadero al principio?</b><span>Identifica la apariencia, la promesa o la idea estable.</span></div>
+    <div class="row"><b>2. ¿Qué destruye esa apariencia?</b><span>Busca el papel del tiempo, la muerte, el despertar, la realidad o el cambio.</span></div>
+    <div class="row"><b>3. ¿Qué aprende la voz poética?</b><span>Formula el desengaño: ¿qué verdad queda al final?</span></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="eyebrow">Idea central</div>
+    <p style="font-family:Georgia,serif;font-size:25px;line-height:1.4;margin:8px 0">
+      Desengaño no significa simplemente tristeza. Es el descubrimiento de que una apariencia que parecía estable no lo era.
+    </p>
+  </div>
+
+  <div class="nav">
+    <button class="btn" id="restart">Empezar de nuevo</button>
+  </div>
+</section>
+</div>
+
+<script>
+const steps=[...document.querySelectorAll('.step')];
+function showStep(id){
+  steps.forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const predictFeedback=document.getElementById('predictFeedback');
+const toAnimation=document.getElementById('toAnimation');
+document.querySelectorAll('[data-answer]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-answer]').forEach(b=>b.classList.remove('correct','wrong'));
+    const ok=btn.dataset.answer==='correct';
+    btn.classList.add(ok?'correct':'wrong');
+    predictFeedback.classList.add('show');
+    predictFeedback.innerHTML=ok
+      ? '<b>Buena predicción.</b> El Barroco cuestiona todo lo que parece estable: belleza, juventud, poder, felicidad o prestigio.'
+      : '<b>No del todo.</b> La belleza es un ejemplo, pero el problema barroco es más amplio: también afecta poder, felicidad, juventud y otras apariencias de estabilidad.';
+    toAnimation.disabled=false;
+  })
+});
+
+const stage=document.getElementById('stage');
+const phaseWord=document.getElementById('phaseWord');
+const phaseSmall=document.getElementById('phaseSmall');
+let timers=[];
+
+function clearTimers(){timers.forEach(clearTimeout);timers=[]}
+function setPhase(word,small){
+  phaseWord.firstChild.nodeValue=word;
+  phaseSmall.textContent=small;
+}
+function runAnimation(){
+  clearTimers();
+  stage.classList.remove('animate');
+  void stage.offsetWidth;
+  setPhase('BELLEZA','apariencia · juventud · brillo');
+  stage.classList.add('animate');
+  timers.push(setTimeout(()=>setPhase('TIEMPO','nada permanece intacto'),3400));
+  timers.push(setTimeout(()=>setPhase('DETERIORO','la apariencia empieza a quebrarse'),5900));
+  timers.push(setTimeout(()=>setPhase('',''),7900));
+}
+
+document.getElementById('toAnimation').addEventListener('click',()=>{showStep('step2');setTimeout(runAnimation,100)});
+document.getElementById('replay').addEventListener('click',runAnimation);
+document.getElementById('toAuthors').addEventListener('click',()=>showStep('step3'));
+document.getElementById('toQuiz').addEventListener('click',()=>showStep('step4'));
+
+const quizFeedback=document.getElementById('quizFeedback');
+const toPattern=document.getElementById('toPattern');
+document.querySelectorAll('[data-quiz]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-quiz]').forEach(b=>b.classList.remove('correct','wrong'));
+    const ok=btn.dataset.quiz==='correct';
+    btn.classList.add(ok?'correct':'wrong');
+    quizFeedback.classList.add('show');
+    quizFeedback.innerHTML=ok
+      ? '<b>Correcto.</b> En los tres casos, una apariencia inicial pierde estabilidad y una realidad más dura termina imponiéndose.'
+      : '<b>Revisa los textos.</b> Los tres muestran que algo que parecía estable —belleza, felicidad o juventud— termina revelándose frágil.';
+    toPattern.disabled=false;
+  })
+});
+
+document.getElementById('toPattern').addEventListener('click',()=>showStep('step5'));
+document.getElementById('restart').addEventListener('click',()=>{
+  predictFeedback.classList.remove('show');
+  quizFeedback.classList.remove('show');
+  toAnimation.disabled=true;
+  toPattern.disabled=true;
+  document.querySelectorAll('.option').forEach(b=>b.classList.remove('correct','wrong'));
+  showStep('step1');
+});
+</script>
+</body>
+</html>
